@@ -1,1 +1,1 @@
-Hi, This is the Backend of Disaster Releif Crowdmapping.
+Hi, This is the Backend of Disaster Relief Crowdmapping.
