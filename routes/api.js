@@ -19,7 +19,10 @@ router.post("/auth/ngo/register", ngoController.registerNgo);
 router.get("/auth/ngo/get-all-ngos", ngoController.getAllNgos);
 
 // Resource Management
-router.post("/resources/add", resourceController.addResource);
+router.post("/resources", resourceController.addResource);
+router.get("/resources", resourceController.getResources);
+router.get("/resources/nearby", resourceController.getNearbyResources);
+router.post("/resources/request", resourceController.requestResource);
 
 module.exports = router;
 /*
