@@ -1,8 +1,8 @@
-const mongoose = require("mongoose")
-const bcrypt = require("bcrypt")
-const medicalReportSchema = require("../schemas/MedicalReportSchema")
-const pointSchema = require("../schemas/PointSchema")
-const addressSchema = require("../schemas/AddressSchema")
+const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
+const medicalReportSchema = require("../schemas/MedicalReportSchema");
+const pointSchema = require("../schemas/PointSchema");
+const addressSchema = require("../schemas/AddressSchema");
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema(
     address: {
       type: addressSchema,
       required: [true, "Address is required"],
-      _id: false
+      _id: false,
     },
     govId: {
       type: String,
@@ -48,13 +48,13 @@ const userSchema = new mongoose.Schema(
     medicalReport: {
       type: medicalReportSchema,
       required: [true, "Medical report is required"],
-      _id: false
+      _id: false,
     },
     location: {
       type: pointSchema,
       required: [true, "Location is required"],
       index: "2dsphere",
-      _id: false
+      _id: false,
     },
     rating: {
       type: Number,
@@ -96,4 +96,4 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
 };
 
 const User = mongoose.model("User", userSchema);
-module.exports = User
+module.exports = User;

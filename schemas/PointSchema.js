@@ -1,27 +1,31 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const PointSchema = new mongoose.Schema({
-    type: {
-      type: String,
-      enum: ['Point'], // Must be 'Point' for GeoJSON
-      required: true,
-      default: 'Point'
+  _id: false,
+  type: {
+    type: String,
+    enum: ["Point"], // Must be 'Point' for GeoJSON
+    required: true,
+    default: "Point",
+  },
+  coordinates: {
+    type: [Number], // [longitude, latitude]
+    required: true,
+    validate: {
+      validator: (coords) => {
+        // Validate longitude (-180 to 180) and latitude (-90 to 90)
+        return (
+          coords.length === 2 &&
+          coords[0] >= -180 &&
+          coords[0] <= 180 &&
+          coords[1] >= -90 &&
+          coords[1] <= 90
+        );
+      },
+      message: `Invalid coordinates. Use [longitude, latitude].`,
     },
-    coordinates: {
-      type: [Number], // [longitude, latitude]
-      required: true,
-      validate: {
-        validator: (coords) => {
-          // Validate longitude (-180 to 180) and latitude (-90 to 90)
-          return (
-            coords.length === 2 &&
-            coords[0] >= -180 && coords[0] <= 180 &&
-            coords[1] >= -90 && coords[1] <= 90
-          );
-        },
-        message: `Invalid coordinates. Use [longitude, latitude].`
-      }
-    }
-  });
+  },
+  _id: false,
+});
 
-  module.exports = PointSchema
+module.exports = PointSchema;

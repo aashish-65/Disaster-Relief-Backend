@@ -1,13 +1,14 @@
+// models/NgoModel.js
 const mongoose = require("mongoose");
-const medicalReportSchema = require("../schemas/MedicalReportSchema");
-const pointSchema = require("../schemas/PointSchema");
+const bcrypt = require("bcrypt");
 const addressSchema = require("../schemas/AddressSchema");
+const pointSchema = require("../schemas/PointSchema");
 
-const volunteerSchema = new mongoose.Schema(
+const ngoSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: [true, "Name is required"],
+      required: [true, "Organization name is required"],
       trim: true,
     },
     email: {
@@ -27,28 +28,57 @@ const volunteerSchema = new mongoose.Schema(
     address: {
       type: addressSchema,
       required: [true, "Address is required"],
+      _id: false,
     },
-    govId: {
+    registrationNumber: {
       type: String,
-      required: [true, "Government ID is required"],
+      required: [true, "Registration number is required"],
       unique: true,
-      match: [/^\d{12}$/, "Please enter a valid government ID"],
     },
     password: {
       type: String,
       required: [true, "Password is required"],
       select: false,
     },
+    description: {
+      type: String,
+      required: [true, "Description is required"],
+    },
+    website: {
+      type: String,
+      match: [/^https?:\/\/.+\..+/, "Invalid website URL"],
+    },
     location: {
       type: pointSchema,
       required: [true, "Location is required"],
       index: "2dsphere",
+      _id: false,
+    },
+    resourcesProvided: [
+      {
+        type: String,
+        enum: [
+          "food",
+          "water",
+          "medical",
+          "shelter",
+          "clothing",
+          "fuel",
+          "communication",
+          "other",
+        ],
+        required: [true, "Resource type is required"],
+      },
+    ],
+    verificationStatus: {
+      type: String,
+      enum: ["pending", "verified", "rejected"],
+      default: "pending",
     },
     profileImage: {
       type: String,
-      required: [true, "Profile image is required"],
       default:
-        "https://res.cloudinary.com/your-cloud/image/upload/default-profile.jpg",
+        "https://res.cloudinary.com/your-cloud/image/upload/default-ngo.jpg",
       match: [/^https?:\/\/.+\..+/, "Invalid image URL"],
     },
   },
@@ -57,14 +87,11 @@ const volunteerSchema = new mongoose.Schema(
   }
 );
 
-volunteerSchema.pre("save", async function (next) {
-  // Only hash the password if it has been modified (or is new)
+// Password hashing middleware
+ngoSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
-
   try {
-    // Generate a salt
     const salt = await bcrypt.genSalt(10);
-    // Hash the password with the salt
     this.password = await bcrypt.hash(this.password, salt);
     next();
   } catch (error) {
@@ -72,19 +99,9 @@ volunteerSchema.pre("save", async function (next) {
   }
 });
 
-// Method to compare passwords
-volunteerSchema.methods.comparePassword = async function (candidatePassword) {
+ngoSchema.methods.comparePassword = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
-const Volunteer = mongoose.model("Volunteer", volunteerSchema);
-module.exports = Volunteer;
-
-/*name,
-    email,
-    phone,
-    address,
-    password,
-    location,
-    profileImage,
-    govId*/
+const NGO = mongoose.model("NGO", ngoSchema);
+module.exports = NGO;

@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 const addressSchema = new mongoose.Schema({
+  _id: false,
   line1: {
     type: String,
     required: [true, "Line 1 is required"],
