@@ -6,53 +6,6 @@ POST /api/resources/request               - Request resources
 POST /api/resources/donate                - Donate resources //to be done by cryptocurrency wallet
 PUT  /api/resources/:id/allocate          - Allocate resources
 
-
-
-name: {
-      type: String,
-      required: [true, "Resource name is required"],
-      trim: true,
-    },
-    description: {
-      type: String,
-      required: [true, "Description is required"],
-    },
-    resourceType: {
-      type: String,
-      enum: Object.keys(RESOURCE_UNITS),
-      required: [true, "Resource type is required"],
-    },
-    quantity: {
-      type: Number,
-      required: [true, "Quantity is required"],
-      min: [0, "Quantity cannot be negative"],
-    },
-    availableQuantity: {
-      type: Number,
-      required: [true, "Available quantity is required"],
-      min: [0, "Available quantity cannot be negative"],
-    },
-    location: {
-      type: pointSchema,
-      required: [true, "Location is required"],
-      index: "2dsphere",
-    },
-    providedBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "NGO",
-      required: [true, "Provider is required"],
-    },
-    contactPerson: {
-      name: String,
-      phone: String,
-    },
-    availableUntil: {
-      type: Date,
-    },
-    lastUpdated: {
-      type: Date,
-      default: Date.now,
-    },
 */
 
 const Resource = require("../models/ResourceModel");
