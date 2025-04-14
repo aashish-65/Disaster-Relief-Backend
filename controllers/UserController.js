@@ -85,6 +85,7 @@ const userLogin = async (req, res) => {
   }
 };
 
+
 const getAllUsers = async (req, res) => {
   try {
     const users = await User.find();
@@ -94,4 +95,54 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, getAllUsers };
+
+const updateUserInfo = async (req, res) => {
+  const { userId } = req.params;
+  const {
+    name,
+    email,
+    phone,
+    address,
+    password,
+    medicalReport,
+    location,
+    profileImage,
+    emergencyContact,
+  } = req.body;
+
+try {  
+    const updatedUser = await User.findByIdAndUpdate(userId, {
+      name,
+      email,
+      phone,
+      address,
+      password,
+      medicalReport,
+      location,
+      profileImage,
+      emergencyContact,
+    }, { new: true });
+
+    res.status(200).json({message: "User updated successfully", user: updatedUser});
+}catch (err){
+    console.log(err);
+    if (err.name === "ValidationError") {
+      const firstError = Object.values(err.errors)[0].message;
+      return res.status(400).json({ error: firstError });
+    }
+    if (err.code === 11000 && err.keyValue.email) {
+      //Error code 11000 is for duplicate key error when unique: true
+      return res
+        .status(400)
+        .json({ error: "User with this Email already exists" });
+    }
+    if (err.code === 11000 && err.keyValue.phone) {
+      return res
+        .status(400)
+        .json({ error: "User with this Phone Number already exists" });
+    }
+    return res.status(500).json({ message: "Error updating user", error: err.message });
+  }
+}
+
+module.exports = { registerUser, getAllUsers, updateUserInfo, userLogin };
