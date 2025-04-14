@@ -30,7 +30,6 @@ const incidentSchema = new mongoose.Schema({
   address: {
     type: addressSchema,
     required: [true, "Address is required"],
-    _id: false,
   },
   reportedBy: {
     type: mongoose.Schema.Types.ObjectId,
