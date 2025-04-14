@@ -1,10 +1,11 @@
 /*
-POST /api/resources                       - Add new resource
+POST /api/resources                       - Add new resource done*
 GET  /api/resources                       - List available resources
 GET  /api/resources/nearby                - Find nearby resources
 POST /api/resources/request               - Request resources
 POST /api/resources/donate                - Donate resources //to be done by cryptocurrency wallet
 PUT  /api/resources/:id/allocate          - Allocate resources
+PUT /api/resources/requests/:requestId/status - Update resource request status
 
 */
 
@@ -243,6 +244,80 @@ const requestResource = async (req, res) => {
   }
 };
 
+/**
+ * @route PUT /api/resources/:id/allocate
+ * @desc Allocate resources based on approved resource requests
+ * @access Private
+ */
+const allocateResource = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { requestId } = req.body;
+    
+    // Validate input
+    if (!requestId) {
+      return res.status(400).json({ error: 'Resource request ID is required' });
+    }
+    
+    // Fetch the resource from database
+    const resource = await Resource.findById(id);
+    if (!resource) {
+      return res.status(404).json({ error: 'Resource not found' });
+    }
+    
+    // Fetch the resource request
+    const resourceRequest = await ResourceRequest.findById(requestId);
+    if (!resourceRequest) {
+      return res.status(404).json({ error: 'Resource request not found' });
+    }
+    
+    // Validate request status - only approved requests can be allocated
+    if (resourceRequest.status !== 'approved') {
+      return res.status(400).json({ 
+        error: 'Cannot allocate resources for non-approved requests',
+        currentStatus: resourceRequest.status
+      });
+    }
+    
+    // Check if the request is for this specific resource
+    if (resourceRequest.resourceId.toString() !== id) {
+      return res.status(400).json({ 
+        error: 'Resource request is not for this resource'
+      });
+    }
+    
+    // Check if resource has enough available quantity
+    if (resource.availableQuantity < resourceRequest.quantity) {
+      return res.status(400).json({ 
+        error: 'Insufficient resource quantity',
+        available: resource.availableQuantity,
+        requested: resourceRequest.quantity
+      });
+    }
+    
+    // Update request status to allocated
+    resourceRequest.status = 'allocated';
+    resourceRequest.allocationDate = new Date();
+    await resourceRequest.save();
+    
+    // Update resource availability
+    resource.availableQuantity -= resourceRequest.quantity;
+    resource.allocatedRequests = resource.allocatedRequests || [];
+    resource.allocatedRequests.push(requestId);
+    await resource.save();
+    
+    return res.status(200).json({
+      message: 'Resource allocated successfully',
+      request: resourceRequest,
+      remainingQuantity: resource.availableQuantity
+    });
+    
+  } catch (error) {
+    console.error('Resource allocation error:', error);
+    return res.status(500).json({ error: 'Server error during resource allocation' });
+  }
+};
+
 
 
 module.exports = {
@@ -250,6 +325,7 @@ module.exports = {
   getResourcesByQuery,
   getNearbyResources,
   requestResource,
+  allocateResource,
 };
 
 /*
