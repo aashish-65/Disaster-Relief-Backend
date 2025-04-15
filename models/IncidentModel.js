@@ -6,11 +6,19 @@ const incidentSchema = new mongoose.Schema({
   title: {
     type: String,
     required: [true, "Incident title is required"],
-    trim: true
+    trim: true,
+    default: "Untitled Incident"
+  },
+  caseType:{
+    type: String,
+    enum: ["SOS", "Incident"],
+    required: [true, "Case type is required"],
   },
   description: {
     type: String,
-    required: [true, "Description is required"]
+    required: [true, "Description is required"],
+    trim: true,
+    default: "No description provided"
   },
   incidentType: {
     type: String,
@@ -31,6 +39,7 @@ const incidentSchema = new mongoose.Schema({
     type: addressSchema,
     required: [true, "Address is required"],
   },
+  //To be changed [user, ngo, volunteer]
   reportedBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
@@ -54,7 +63,7 @@ const incidentSchema = new mongoose.Schema({
   }],
   status: {
     type: String,
-    enum: ["reported", "verified", "inProgress", "resolved", "closed", "falseAlarm"],
+    enum: ["reported", "verified", "inProgress","resolved", "closed", "falseAlarm"],
     default: "reported"
   },
   priority: {
@@ -63,7 +72,7 @@ const incidentSchema = new mongoose.Schema({
     max: 10,
     default: 5
   },
-  assignedTo: [{
+  assignedVolunteerLeader: {
     volunteer: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Volunteer'
@@ -77,6 +86,16 @@ const incidentSchema = new mongoose.Schema({
       enum: ["assigned", "accepted", "rejected", "completed"],
       default: "assigned"
     }
+  },
+  assignedTo: [{
+    volunteer: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Volunteer'
+    },
+    assignedAt: {
+      type: Date,
+      default: Date.now
+    },
   }],
   managedBy: {
     type: mongoose.Schema.Types.ObjectId,
@@ -191,3 +210,5 @@ incidentSchema.index({ 'assignedTo.volunteer': 1, status: 1 }); // For finding i
 
 const Incident = mongoose.model("Incident", incidentSchema);
 module.exports = Incident;
+
+

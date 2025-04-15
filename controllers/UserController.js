@@ -60,31 +60,6 @@ const registerUser = async (req, res) => {
   }
 };
 
-const userLogin = async (req, res) => {
-  const { email, password } = req.body;
-
-  try {
-    const user = await User.findOne({ email }).exec();
-
-    if (!user) {
-      return res.status(401).json({ message: "Invalid email " });
-    }
-    const isMatch = await user.comparePassword(password);
-    if (!isMatch) {
-      return res.status(401).json({ message: "Invalid password" });
-    }
-    // Generate JWT token
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "30d",
-    });
-    return res
-      .status(200)
-      .json({ message: "User logged in successfully", token });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
 
 const getAllUsers = async (req, res) => {
   try {
@@ -145,4 +120,4 @@ try {
   }
 }
 
-module.exports = { registerUser, getAllUsers, updateUserInfo, userLogin };
+module.exports = { registerUser, getAllUsers, updateUserInfo };

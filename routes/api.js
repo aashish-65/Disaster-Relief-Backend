@@ -5,27 +5,45 @@ const volunteerController = require("../controllers/VolunteerController");
 const ngoController = require("../controllers/NgoController");
 const resourceController = require("../controllers/ResourceController");
 
-// Authentication & User Management
+// Authentication
 router.post("/auth/verify-otp", authController.verifyOtp);
 router.post("/auth/send-otp", authController.sendVerificationEmail);
+router.post('/auth/login', authController.unifiedLogin);
+router.post('/auth/reset-password', authController.requestPasswordReset);
+router.put('/auth/reset-password', authController.resetPassword);
+
+
+//User Management
 router.post("/auth/user/register", userController.registerUser);
 router.get("/auth/user/get-all-users", userController.getAllUsers);
+router.put("/auth/user/update/:userId", userController.updateUserInfo);
+
+//Volunteer Management
 router.post("/auth/volunteer/register", volunteerController.registerVolunteer);
-router.get(
-  "/auth/user/get-all-volunteers",
-  volunteerController.getAllVolunteers
-);
+router.get("/auth/user/get-all-volunteers",volunteerController.getAllVolunteers);
+router.put("/auth/user/update/:volunteerId", volunteerController.updateVolunteerInfo);
+
+
+
+
 router.post("/auth/ngo/register", ngoController.registerNgo);
 router.get("/auth/ngo/get-all-ngos", ngoController.getAllNgos);
+/*addResource,
+  getResourcesByQuery,
+  getNearbyResources,
+  requestResource,
+  allocateResource,*/
 
 // Resource Management
 router.post("/resources", resourceController.addResource);
-router.get("/resources", resourceController.getResources);
+router.get("/resources", resourceController.getResourcesByQuery);
 router.get("/resources/nearby", resourceController.getNearbyResources);
 router.post("/resources/request", resourceController.requestResource);
 
 module.exports = router;
 /*
+
+
 To implement:
 // Incident Management
 POST /api/incidents                       - Report new incident

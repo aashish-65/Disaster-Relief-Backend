@@ -69,4 +69,15 @@ const getAllNgos = async (req, res) => {
   }
 };
 
+const getVerifiedNgos = async (req, res) => {
+  try {
+    const ngos = await NGO.find({ verificationStatus: 'verified' }).select('-password');
+    res.status(200).json(ngos);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// const getNgoByLocation 
+
 module.exports = { registerNgo, getAllNgos };
