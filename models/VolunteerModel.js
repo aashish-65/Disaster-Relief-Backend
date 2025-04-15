@@ -34,6 +34,14 @@ const volunteerSchema = new mongoose.Schema(
       unique: true,
       match: [/^\d{12}$/, "Please enter a valid government ID"],
     },
+    availaibility: {
+      type: Boolean,
+      default: true,
+    },
+    activeCase: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Incident",
+    },
     password: {
       type: String,
       required: [true, "Password is required"],

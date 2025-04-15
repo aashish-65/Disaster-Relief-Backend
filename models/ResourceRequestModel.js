@@ -10,7 +10,7 @@ const resourceRequestSchema = new mongoose.Schema({
     },
     userModel: {
       type: String,
-      enum: ['User', 'Volunteer', 'NGO'],
+      enum: ['Volunteer', 'NGO'],
       required: true
     }
   },

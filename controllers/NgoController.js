@@ -69,4 +69,7 @@ const getAllNgos = async (req, res) => {
   }
 };
 
+
+// const getNgoByLocation 
+
 module.exports = { registerNgo, getAllNgos };

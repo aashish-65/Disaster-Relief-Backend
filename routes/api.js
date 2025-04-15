@@ -11,21 +11,27 @@ router.post("/auth/send-otp", authController.sendVerificationEmail);
 router.post("/auth/user/register", userController.registerUser);
 router.get("/auth/user/get-all-users", userController.getAllUsers);
 router.post("/auth/volunteer/register", volunteerController.registerVolunteer);
-router.get(
-  "/auth/user/get-all-volunteers",
-  volunteerController.getAllVolunteers
-);
+router.get("/auth/user/get-all-volunteers",volunteerController.getAllVolunteers);
 router.post("/auth/ngo/register", ngoController.registerNgo);
 router.get("/auth/ngo/get-all-ngos", ngoController.getAllNgos);
 
+
+/*addResource,
+  getResourcesByQuery,
+  getNearbyResources,
+  requestResource,
+  allocateResource,*/
+
 // Resource Management
 router.post("/resources", resourceController.addResource);
-router.get("/resources", resourceController.getResources);
+router.get("/resources", resourceController.getResourcesByQuery);
 router.get("/resources/nearby", resourceController.getNearbyResources);
 router.post("/resources/request", resourceController.requestResource);
 
 module.exports = router;
 /*
+
+
 To implement:
 // Incident Management
 POST /api/incidents                       - Report new incident

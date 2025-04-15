@@ -318,7 +318,73 @@ const allocateResource = async (req, res) => {
   }
 };
 
-
+/**
+ * @route PUT /api/resources/requests/:requestId/status
+ * @desc Approve or reject a resource request (admin only)
+ * @access Private/Admin
+ */
+const updateRequestStatus = async (req, res) => {
+  try {
+    const { requestId } = req.params;
+    const { status, reason } = req.body;
+    
+    // Validate input
+    if (!status || !['approved', 'rejected', 'pending'].includes(status)) {
+      return res.status(400).json({ 
+        error: 'Valid status required (approved, rejected, or pending)' 
+      });
+    }
+    
+    // Find the resource request
+    const resourceRequest = await ResourceRequest.findById(requestId);
+    
+    if (!resourceRequest) {
+      return res.status(404).json({ error: 'Resource request not found' });
+    }
+    
+    // If approving, check resource availability
+    if (status === 'approved') {
+      // Find the associated resource
+      const resource = await Resource.findById(resourceRequest.resourceId);
+      
+      if (!resource) {
+        return res.status(404).json({ error: 'Associated resource not found' });
+      }
+      
+      // Check if there's enough quantity available
+      if (resource.availableQuantity < resourceRequest.quantity) {
+        return res.status(400).json({
+          error: 'Insufficient resource quantity for approval',
+          available: resource.availableQuantity,
+          requested: resourceRequest.quantity
+        });
+      }
+    }
+    
+    // Update request status
+    resourceRequest.status = status;
+    resourceRequest.statusUpdateDate = new Date();
+    
+    // If rejected, record the reason
+    if (status === 'rejected' && reason) {
+      resourceRequest.rejectionReason = reason;
+    }
+    
+    // Record who approved/rejected
+    resourceRequest.reviewedBy = req.user.id; // Assumes user ID from auth middleware
+    
+    await resourceRequest.save();
+    
+    return res.status(200).json({
+      message: `Resource request ${status} successfully`,
+      request: resourceRequest
+    });
+    
+  } catch (error) {
+    console.error('Request status update error:', error);
+    return res.status(500).json({ error: 'Server error during request status update' });
+  }
+};
 
 module.exports = {
   addResource,
