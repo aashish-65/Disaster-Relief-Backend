@@ -1,4 +1,5 @@
 const nodemailer = require("nodemailer");
+const crypto = require('crypto');
 const User = require("../models/UserModel");
 const Otp = require("../models/OtpModel");
 
@@ -64,7 +65,81 @@ const sendVerificationEmail = async (req, res) => {
   }
 };
 
+
+const requestPasswordReset = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const user = await User.findOne({ email }) || 
+                 await Volunteer.findOne({ email }) || 
+                 await Ngo.findOne({ email });
+    
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const token = crypto.randomBytes(20).toString('hex');
+    const expires = Date.now() + 3600000; // 1 hour
+    
+    await ResetToken.create({
+      userId: user._id,
+      token,
+      expires
+    });
+
+    // Send email with reset link
+    return res.status(200).json({ message: "Reset link sent" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+const resetPassword = async (req, res) => {
+  const { token, newPassword } = req.body;
+  try {
+    const resetRecord = await ResetToken.findOne({ token });
+    if (!resetRecord || Date.now() > resetRecord.expires) {
+      return res.status(400).json({ message: "Invalid or expired token" });
+    }
+
+    const user = await User.findById(resetRecord.userId) ||
+                 await Volunteer.findById(resetRecord.userId) ||
+                 await Ngo.findById(resetRecord.userId);
+
+    user.password = newPassword;
+    await user.save();
+    await ResetToken.deleteOne({ token });
+    
+    return res.status(200).json({ message: "Password updated successfully" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+const unifiedLogin = async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const user = await User.findOne({ email }).select('+password') ||
+                 await Volunteer.findOne({ email }).select('+password') ||
+                 await Ngo.findOne({ email }).select('+password');
+
+    if (!user || !(await user.comparePassword(password))) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    const token = jwt.sign(
+      { id: user._id, role: user.constructor.modelName },
+      process.env.JWT_SECRET,
+      { expiresIn: '30d' }
+    );
+
+    res.json({ token, role: user.constructor.modelName });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 module.exports = {
   sendVerificationEmail,
   verifyOtp,
+  unifiedLogin,
+  resetPassword,
+  requestPasswordReset
 };

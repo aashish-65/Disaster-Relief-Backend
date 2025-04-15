@@ -63,4 +63,52 @@ const getAllVolunteers = async (req, res) => {
   }
 };
 
+const assignVolunteer = async (req, res) => {
+  const { id } = req.params;
+  const { volunteerId } = req.body;
+  
+  try {
+    const incident = await Incident.findById(id);
+    if (!incident) return res.status(404).json({ message: "Incident not found" });
+    
+    if(incident.assignedTo.some(a => a.volunteer.toString() === volunteerId)) {
+      return res.status(400).json({ message: "Volunteer already assigned" });
+    }
+    
+    await incident.assignVolunteer(volunteerId);
+    return res.status(200).json({ message: "Volunteer assigned successfully" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+
+const getAvailableVolunteers = async (req, res) => {
+  try {
+    const volunteers = await Volunteer.find({
+      availability: "available",
+    }).select('-password');
+    res.status(200).json(volunteers);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+const updateVolunteerStatus = async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+  
+  try {
+    const volunteer = await Volunteer.findByIdAndUpdate(
+      id,
+      { availability: status, lastActive: new Date() },
+      { new: true }
+    ).select('-password');
+    
+    res.status(200).json(volunteer);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 module.exports = { registerVolunteer, getAllVolunteers };

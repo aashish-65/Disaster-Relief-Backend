@@ -93,14 +93,14 @@ const createIncident = async (req, res) => {
         const incidents = await Incident.find({
             location: {
                 $near: {
-                  $geomettry: {
+                  $geometry: {
                     type: "Point",
                     coordinates: [longitude, latitude] 
                 },
-                $maxDistance: radius * 1000||5000
+                $maxDistance: (radius || 5) * 1000 
               }
             },
-            status: { $ne: "closed"||"resolved"||"falseAlarm" } // 
+            status: { $nin: ["closed", "resolved", "falseAlarm"] } // 
         }).populate("reportedBy managedBy assignedTo");
 
         return res.status(200).json({ incidents });
@@ -127,3 +127,16 @@ const createIncident = async (req, res) => {
         return res.status(500).json({ message: "Internal server error" });
       }
     }
+
+    const completeIncident = async (req, res) => {
+      const { id } = req.params;
+      try {
+        const incident = await Incident.findById(id);
+        if (!incident) return res.status(404).json({ message: "Incident not found" });
+        
+        await incident.updateStatus('resolved');
+        return res.status(200).json({ message: "Incident marked as resolved" });
+      } catch (err) {
+        res.status(500).json({ message: err.message });
+      }
+    };

@@ -312,3 +312,198 @@ All endpoints may return the following error responses:
   "error": "Detailed error message"
 }
 ```
+
+
+src/
+├── assets/
+│   ├── images/
+│   └── icons/
+├── components/
+│   ├── layout/
+│   │   ├── Navbar.jsx
+│   │   ├── Sidebar.jsx
+│   │   ├── Footer.jsx
+│   │   └── PageContainer.jsx
+│   ├── maps/
+│   │   ├── InteractiveMap.jsx
+│   │   ├── LocationPicker.jsx
+│   │   └── ClusterMap.jsx
+│   ├── forms/
+│   │   ├── AddressForm.jsx
+│   │   ├── MedicalInfoForm.jsx
+│   │   ├── LocationSelector.jsx
+│   │   └── ResourceForm.jsx
+│   ├── ui/
+│   │   ├── IncidentCard.jsx
+│   │   ├── ResourceCard.jsx
+│   │   ├── StatusBadge.jsx
+│   │   ├── SeverityIndicator.jsx
+│   │   ├── Modal.jsx
+│   │   └── NotificationToast.jsx
+│   ├── dashboard/
+│   │   ├── StatCard.jsx
+│   │   ├── ActivityTimeline.jsx
+│   │   ├── Charts.jsx
+│   │   └── RecentList.jsx
+│   └── auth/
+│       ├── OtpInput.jsx
+│       └── RoleSelector.jsx
+├── pages/
+│   ├── auth/
+│   │   ├── Login.jsx
+│   │   ├── Register.jsx
+│   │   ├── RegisterUser.jsx
+│   │   ├── RegisterVolunteer.jsx
+│   │   ├── RegisterNGO.jsx
+│   │   └── OtpVerification.jsx
+│   ├── dashboard/
+│   │   ├── UserDashboard.jsx
+│   │   ├── VolunteerDashboard.jsx
+│   │   └── NgoDashboard.jsx
+│   ├── incidents/
+│   │   ├── ReportIncident.jsx
+│   │   ├── IncidentList.jsx
+│   │   ├── IncidentMap.jsx
+│   │   ├── IncidentDetail.jsx
+│   │   └── NearbyIncidents.jsx
+│   ├── resources/
+│   │   ├── AddResource.jsx
+│   │   ├── ResourceList.jsx
+│   │   ├── ResourceMap.jsx
+│   │   ├── RequestResource.jsx
+│   │   ├── ManageRequests.jsx
+│   │   └── DonateResource.jsx
+│   ├── profile/
+│   │   ├── UserProfile.jsx
+│   │   ├── VolunteerProfile.jsx
+│   │   └── NgoProfile.jsx
+│   └── analytics/
+│       ├── ImpactStats.jsx
+│       ├── ResponseEffectiveness.jsx
+│       └── Reports.jsx
+├── hooks/
+│   ├── useAuth.js
+│   ├── useIncidents.js
+│   ├── useResources.js
+│   └── useGeolocation.js
+├── services/
+│   ├── api.js
+│   ├── authService.js
+│   ├── incidentService.js
+│   ├── resourceService.js
+│   ├── userService.js
+│   └── notificationService.js
+├── utils/
+│   ├── formatters.js
+│   ├── validators.js
+│   ├── mapHelpers.js
+│   └── constants.js
+├── context/
+│   ├── AuthContext.jsx
+│   ├── ThemeContext.jsx
+│   └── NotificationContext.jsx
+├── App.jsx
+├── main.jsx
+└── index.css
+
+Application Structure
+Core Pages
+
+Authentication Pages
+
+Login Page
+Register User Page (with different forms for Users, Volunteers, and NGOs)
+OTP Verification Page
+
+
+Dashboard Pages
+
+User Dashboard
+Volunteer Dashboard
+NGO Dashboard
+Admin Dashboard (if applicable)
+
+
+Incident Management
+
+Report Incident Page
+Incident List/Map View
+Incident Detail Page
+Nearby Incidents Page
+
+
+Resource Management
+
+Add Resources Page (for NGOs)
+Resource List/Map View
+Request Resources Page
+Resource Requests Management (for NGOs)
+
+
+
+Profile Pages
+
+User Profile
+Volunteer Profile
+NGO Profile
+
+
+Analytics & Reporting
+
+Impact Statistics Page
+Response Effectiveness Page
+Reports Page
+
+
+
+Reusable Components
+
+Layout Components
+
+Navbar
+Sidebar/Navigation
+Footer
+Page Container
+
+
+Map Components
+
+Interactive Map (for showing incidents and resources)
+Location Picker (for reporting incidents and resources)
+Cluster Map (for areas with multiple incidents)
+
+
+Form Components
+
+Input Fields (standardized for consistent UI)
+Form Groups
+Address Form (reused across user, volunteer, and incident registration)
+Location Selector
+Resource Selection
+
+
+UI Components
+
+Incident Card
+Resource Card
+Status Badge (for incident/request status)
+Severity Indicator
+Modal
+Notification Toast
+Skeleton Loaders
+Pagination Controls
+
+
+Dashboard Components
+
+Stat Cards
+Activity Timeline
+Charts and Graphs
+Recent Incidents List
+Nearby Resources List
+
+
+Authentication Components
+
+OTP Input
+Role Selector

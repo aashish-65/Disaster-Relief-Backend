@@ -34,9 +34,10 @@ const volunteerSchema = new mongoose.Schema(
       unique: true,
       match: [/^\d{12}$/, "Please enter a valid government ID"],
     },
-    availaibility: {
-      type: Boolean,
-      default: true,
+    availability: {
+      type: String,
+      enum: ["available", "busy", "unavailable"],
+      default: "available"
     },
     activeCase: {
       type: mongoose.Schema.Types.ObjectId,
